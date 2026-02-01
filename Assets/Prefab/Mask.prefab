@@ -12,6 +12,8 @@ GameObject:
   - component: {fileID: 769686029489580818}
   - component: {fileID: 7666847446718584083}
   - component: {fileID: 2052464947898075023}
+  - component: {fileID: 2110890050328139930}
+  - component: {fileID: 2384994091026356728}
   m_Layer: 6
   m_Name: Mask
   m_TagString: Untagged
@@ -77,6 +79,12 @@ MonoBehaviour:
   baseAngle: 0
   throwSpeed: 18
   throwLifetime: 5
+  previewPulseScale: 1
+  previewScaleMultiplier: 1.15
+  previewPulseSpeed: 8
+  previewEmission: 1
+  previewEmissionColor: {r: 1, g: 1, b: 1, a: 1}
+  previewEmissionIntensity: 2
 --- !u!54 &2052464947898075023
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -85,7 +93,7 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4416333818077305115}
   serializedVersion: 4
-  m_Mass: 1
+  m_Mass: 0.5
   m_Drag: 0
   m_AngularDrag: 0.05
   m_CenterOfMass: {x: 0, y: 0, z: 0}
@@ -93,17 +101,57 @@ Rigidbody:
   m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
   m_IncludeLayers:
     serializedVersion: 2
-    m_Bits: 55
+    m_Bits: 183
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 8
+    m_Bits: 72
   m_ImplicitCom: 1
   m_ImplicitTensor: 1
   m_UseGravity: 1
-  m_IsKinematic: 1
+  m_IsKinematic: 0
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!135 &2110890050328139930
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4416333818077305115}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Radius: 0.5
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &2384994091026356728
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4416333818077305115}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bfab46a3d8ec3dc4587e65498281bbce, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  targetLayers:
+    serializedVersion: 2
+    m_Bits: 128
+  damage: 10
+  hitCooldown: 0.2
+  activeOnStart: 1
+  destroyOnHit: 1
 --- !u!1001 &3034614854058204122
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -154,7 +202,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 599979dd4faff66469fa6c9228452a9c, type: 3}
       propertyPath: m_Name
-      value: Meshy_AI_Mystical_Skull_Mask_0131004619_texture
+      value: Mask_Visuals
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 599979dd4faff66469fa6c9228452a9c, type: 3}
       propertyPath: m_Layer

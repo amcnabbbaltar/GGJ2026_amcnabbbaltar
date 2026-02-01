@@ -148,7 +148,7 @@ public class CharacterController : MonoBehaviour
             rb.AddForce(Vector3.up * jumpImpulse, ForceMode.Impulse);
         }
 
-        var dash = GetComponent<RigidbodyDash>();
+        var dash = GetComponent<Dash>();
         if (dash != null && dash.IsDashing)
         {
             ApplyBetterGravity();
@@ -172,10 +172,6 @@ public class CharacterController : MonoBehaviour
             animator.SetFloat("Speed", speedAnim);
             animator.SetFloat("Direction", direction);
 
-            if (Input.GetButtonUp("Fire1"))
-                animator.SetTrigger("Spawn");
-            if (Input.GetButtonUp("Fire2"))
-                animator.SetTrigger("Attack");
         }
     }
 

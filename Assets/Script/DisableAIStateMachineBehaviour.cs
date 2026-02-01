@@ -30,6 +30,7 @@ public class DisableAIMovementSMB : StateMachineBehaviour
         }
 
         if (rb)
+            rb.isKinematic = false;
             rb.velocity = Vector3.zero;
     }
 
