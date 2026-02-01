@@ -2235,11 +2235,11 @@ MonoBehaviour:
   fireButton: Fire2
   cooldown: 0.5
   cooldownStartsOnEnd: 1
-  totalDuration: 0.9
-  hitboxOnDelay: 0.15
+  totalDuration: 1.5
+  hitboxOnDelay: 0.5
   hitboxActiveDuration: 0.5
-  attackTriggerName: Attack
-  fxDelayFrames: -1
+  attackTriggerName: SpinAttack
+  fxDelayFrames: 10
 --- !u!114 &850184221
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2259,7 +2259,7 @@ MonoBehaviour:
   vfxRotationOffset: {x: 0, y: -45, z: 0}
   attachVfxToSpawnPoint: 1
   vfxDestroyAfter: 2
-  vfxDelaySeconds: 0
+  vfxDelaySeconds: 0.5
 --- !u!1 &853435956
 GameObject:
   m_ObjectHideFlags: 0
@@ -4624,7 +4624,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 128
   damage: 10
-  hitCooldown: 0.2
+  hitCooldown: 0.5
   activeOnStart: 0
   destroyOnHit: 0
 --- !u!65 &2029609755
@@ -4815,9 +4815,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6c526b761cd40a44bb7c5346778da2b4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  debugCalls: 0
+  debugCalls: 1
   debugAnimator: 1
-  debugFlash: 0
+  debugFlash: 1
   animator: {fileID: 2103007646}
   hitReactTrigger: HitReact
   minTimeBetweenReacts: 0.08

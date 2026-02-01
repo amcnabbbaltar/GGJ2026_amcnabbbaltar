@@ -49,18 +49,27 @@ public class PlayerMeleeAttack : MonoBehaviour
         if (attacking) return;
         if (!sequence || !weaponHitbox) return;
 
-        if (!cooldownStartsOnEnd)
-            nextAllowedTime = Time.time + cooldown;
-
         attacking = true;
         weaponHitbox.SetActive(false);
 
+        // cooldown starts immediately
+        if (!cooldownStartsOnEnd)
+            nextAllowedTime = Time.time + cooldown;
+
         sequence.Play(
-            triggerName: "Attack",
+            triggerName: attackTriggerName, // use your variable instead of hardcoding
             totalDuration: totalDuration,
             timeA: hitboxOnDelay, onA: () => weaponHitbox.SetActive(true),
             timeB: hitboxOnDelay + hitboxActiveDuration, onB: () => weaponHitbox.SetActive(false),
-            onEnd: () => weaponHitbox.SetActive(false)
+            onEnd: () =>
+            {
+                weaponHitbox.SetActive(false);
+                attacking = false;
+
+                // cooldown starts when attack ends
+                if (cooldownStartsOnEnd)
+                    nextAllowedTime = Time.time + cooldown;
+            }
         );
     }
 
