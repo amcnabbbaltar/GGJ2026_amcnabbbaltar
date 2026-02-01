@@ -40,6 +40,7 @@ public class AIContext : MonoBehaviour
     public float cohesionWeight = 1.0f;
     public float separationWeight = 1.5f;
     public float wanderWeight = 0.2f;
+    public float alignmentWeight = 1f;
 
     [Header("Timing")]
     public float updatePathInterval = 0.2f;

@@ -19,21 +19,19 @@ public class TopDownThirdPersonCamera : MonoBehaviour
     {
         if (!target) return;
 
+        // stable smoothing factor
+        float t = 1f - Mathf.Exp(-followSpeed * Time.deltaTime);
+
         // --- BASE CAMERA POSITION ---
         Vector3 desiredPos;
+        Quaternion desiredRot = transform.rotation;
 
         if (rotateWithTarget)
         {
             desiredPos = target.position + target.rotation * offset;
+            desiredRot = Quaternion.LookRotation(target.position - desiredPos, Vector3.up);
 
-            Quaternion desiredRot =
-                Quaternion.LookRotation(target.position - desiredPos, Vector3.up);
-
-            transform.rotation = Quaternion.Slerp(
-                transform.rotation,
-                desiredRot,
-                followSpeed * Time.deltaTime
-            );
+            transform.rotation = Quaternion.Slerp(transform.rotation, desiredRot, t);
         }
         else
         {
@@ -54,22 +52,15 @@ public class TopDownThirdPersonCamera : MonoBehaviour
 
         // --- APPLY POSITION ---
         Vector3 finalPos = desiredPos + shakeOffset;
-        transform.position = Vector3.Lerp(
-            transform.position,
-            finalPos,
-            followSpeed * Time.deltaTime
-        );
+        transform.position = Vector3.Lerp(transform.position, finalPos, t);
 
         if (!rotateWithTarget)
         {
-            transform.rotation = Quaternion.LookRotation(
-                target.position - transform.position,
-                Vector3.up
-            );
+            // use finalPos (intended position), not transform.position (lagging/feedback)
+            transform.rotation = Quaternion.LookRotation(target.position - finalPos, Vector3.up);
         }
     }
 
-    // 🔥 CALL THIS WHEN PLAYER GETS HIT
     public void Shake(float duration, float magnitude)
     {
         shakeTimeRemaining = duration;

@@ -76,6 +76,8 @@ public abstract class AIState
     {
         Vector3 center = Vector3.zero;
         Vector3 separation = Vector3.zero;
+        Vector3 alignment = Vector3.zero;
+
         int count = 0;
 
         foreach (var other in AIFlockRegistry.Agents)
@@ -86,6 +88,7 @@ public abstract class AIState
             if (d <= ctx.neighborRadius)
             {
                 center += other.transform.position;
+                alignment += other.transform.forward; // 👈 ALIGNMENT
                 count++;
 
                 if (d <= ctx.separationRadius && d > 0.001f)
@@ -98,18 +101,33 @@ public abstract class AIState
         if (count > 0)
         {
             center /= count;
-            Vector3 cohesion = (center - ctx.transform.position);
-            cohesion.y = 0;
+            alignment /= count;
 
+            Vector3 cohesion = center - ctx.transform.position;
+
+            cohesion.y = 0;
             separation.y = 0;
-            dir = cohesion.normalized * ctx.cohesionWeight + separation.normalized * ctx.separationWeight;
+            alignment.y = 0;
+
+            dir =
+                cohesion.normalized   * ctx.cohesionWeight +
+                separation.normalized * ctx.separationWeight +
+                alignment.normalized  * ctx.alignmentWeight;
         }
 
-        // drift
-        Vector3 drift = new Vector3(Random.Range(-1f, 1f), 0, Random.Range(-1f, 1f)).normalized;
-        dir = (dir + drift * ctx.wanderWeight);
+        // wander / drift
+        Vector3 drift = new Vector3(
+            Random.Range(-1f, 1f),
+            0,
+            Random.Range(-1f, 1f)
+        ).normalized;
+
+        dir += drift * ctx.wanderWeight;
         dir.y = 0;
 
-        return dir.sqrMagnitude < 0.0001f ? ctx.transform.forward : dir.normalized;
+        return dir.sqrMagnitude < 0.0001f
+            ? ctx.transform.forward
+            : dir.normalized;
     }
+
 }

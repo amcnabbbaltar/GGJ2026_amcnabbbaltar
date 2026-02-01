@@ -35,6 +35,13 @@ public class CharacterController : MonoBehaviour
     public float groundCheckDistance = 0.2f;
     public LayerMask groundMask = ~0;
 
+    [Header("Wall Sliding Prevention")]
+    [Tooltip("How far ahead to check for a wall when airborne.")]
+    public float wallCheckDistance = 0.35f;
+
+    [Tooltip("Height of the wall check ray above the player's pivot.")]
+    public float wallCheckHeight = 0.9f;
+
     [Header("Refs")]
     public Rigidbody rb;
     public Animator animator;
@@ -89,7 +96,7 @@ public class CharacterController : MonoBehaviour
         // --- Movement ---
         if (grounded)
         {
-            // Ground acceleration (your original)
+            // Ground acceleration
             Vector3 targetVelocity = input * maxSpeed;
 
             Vector3 currentVelocity = rb.velocity;
@@ -97,16 +104,25 @@ public class CharacterController : MonoBehaviour
 
             Vector3 force = (targetVelocity - currentVelocity) * acceleration;
             rb.AddForce(force, ForceMode.Acceleration);
+
+            // Keep stored air vel updated while grounded (so takeoff feels consistent)
+            storedAirPlanarVel = targetVelocity;
         }
         else
         {
-            // Airborne: keep the floor momentum direction/speed
+            // 1) Start from stored momentum (planar)
+            Vector3 planar = new Vector3(storedAirPlanarVel.x, 0f, storedAirPlanarVel.z);
+
+            // 2) If wall in front of planar direction, remove "into wall" component so we slide instead of stick
+            planar = ProjectPlanarAlongWall(planar);
+
+            // 3) Apply the planar we want to preserve WITHOUT fighting Y
             Vector3 v = rb.velocity;
-            v.x = storedAirPlanarVel.x;
-            v.z = storedAirPlanarVel.z;
+            v.x = planar.x;
+            v.z = planar.z;
             rb.velocity = v;
 
-            // Optional: small steering in air
+            // 4) Optional small steering in air (adds to stored momentum)
             if (airAcceleration > 0f && input.sqrMagnitude > 0.0001f)
             {
                 Vector3 desired = input * airMaxSpeed;
@@ -120,9 +136,12 @@ public class CharacterController : MonoBehaviour
                 newPlanar.y = 0f;
                 storedAirPlanarVel = newPlanar;
             }
+
+            // Better gravity should apply whenever airborne (unless you intentionally disable it)
+            ApplyBetterGravity();
         }
 
-        // Rotate (optional: you can keep this even in air, feels fine)
+        // Rotate (feels fine even in air)
         if (input.sqrMagnitude > 0.0001f)
         {
             Quaternion targetRot = Quaternion.LookRotation(input, Vector3.up);
@@ -148,14 +167,6 @@ public class CharacterController : MonoBehaviour
             rb.AddForce(Vector3.up * jumpImpulse, ForceMode.Impulse);
         }
 
-        var dash = GetComponent<Dash>();
-        if (dash != null && dash.IsDashing)
-        {
-            ApplyBetterGravity();
-            return;
-        }
-
-
         // Animator
         if (animator)
         {
@@ -171,8 +182,26 @@ public class CharacterController : MonoBehaviour
             animator.SetBool("IsGrounded", grounded);
             animator.SetFloat("Speed", speedAnim);
             animator.SetFloat("Direction", direction);
-
         }
+    }
+
+    Vector3 ProjectPlanarAlongWall(Vector3 planar)
+    {
+        if (planar.sqrMagnitude < 0.0001f) return planar;
+
+        Vector3 origin = transform.position + Vector3.up * wallCheckHeight;
+        Vector3 dir = planar.normalized;
+
+        if (Physics.Raycast(origin, dir, out RaycastHit hit, wallCheckDistance, groundMask, QueryTriggerInteraction.Ignore))
+        {
+            // Remove component pointing into the wall
+            planar = Vector3.ProjectOnPlane(planar, hit.normal);
+
+            // Important: also update storedAirPlanarVel so we don't re-push into wall next frame
+            storedAirPlanarVel = planar;
+        }
+
+        return planar;
     }
 
     void ApplyBetterGravity()

@@ -27,6 +27,7 @@ public class PlayerMeleeAttack : MonoBehaviour
 
     bool attacking;
     float nextAllowedTime;
+    MaskAimUI aimUI;
 
     void Awake()
     {
@@ -35,6 +36,8 @@ public class PlayerMeleeAttack : MonoBehaviour
 
         if (weaponHitbox)
             weaponHitbox.SetActive(false);
+        
+        aimUI = FindObjectOfType<MaskAimUI>();
     }
 
     void Update()
@@ -49,6 +52,8 @@ public class PlayerMeleeAttack : MonoBehaviour
         if (attacking) return;
         if (!sequence || !weaponHitbox) return;
 
+        Vector3 aimDirection = aimUI.UpdateAim(true);
+        TurnTowards(aimDirection, true);
         attacking = true;
         weaponHitbox.SetActive(false);
 
@@ -82,5 +87,25 @@ public class PlayerMeleeAttack : MonoBehaviour
 
         if (sequence)
             sequence.StopAll();
+    }
+    void TurnTowards(Vector3 direction, bool snap)
+    {
+        direction.y = 0f;
+        if (direction.sqrMagnitude < 0.001f) return;
+
+        Quaternion targetRot = Quaternion.LookRotation(direction.normalized, Vector3.up);
+        if (snap)
+        {
+            transform.rotation = targetRot;
+        }
+        else
+        {
+            float turnSpeed = 720f; // degrees per second
+            transform.rotation = Quaternion.RotateTowards(
+                transform.rotation,
+                targetRot,
+                turnSpeed * Time.deltaTime
+            );
+        }
     }
 }

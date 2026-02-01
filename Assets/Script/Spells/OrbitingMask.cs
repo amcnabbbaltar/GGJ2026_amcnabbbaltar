@@ -4,6 +4,9 @@ using UnityEngine;
 public class OrbitingMask : MonoBehaviour
 {
     public enum State { Orbiting, Thrown }
+    private State state = State.Orbiting;
+
+    public bool IsThrown => state == State.Thrown;
 
     [Header("Orbit")]
     public Transform center;
@@ -27,7 +30,6 @@ public class OrbitingMask : MonoBehaviour
 
     static float ringSpin;
 
-    State state = State.Orbiting;
     Rigidbody rb;
 
     bool selectedForThrow;
